@@ -134,7 +134,7 @@ def main():
                             "embedding": st.session_state.response["embeddings"],
                         }
                     )
-                    st.write('response',st.session_state.embeddings_meta_df)
+                    # st.write('response',st.session_state.embeddings_meta_df)
                 st.success('Proposals Succesfully Processed!', icon="✅")
                 
                     
