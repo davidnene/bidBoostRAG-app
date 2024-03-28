@@ -42,9 +42,13 @@ def handle_clear_chat():
 
 def main():
     UPLOAD_DIRECTORY = 'docs/proposals/'
+    DATA_UPLOAD_DIRECTORY = 'data/'
 
     if not os.path.exists(UPLOAD_DIRECTORY):
-        os.makedirs(UPLOAD_DIRECTORY)
+        os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
+    
+    if not os.path.exists(DATA_UPLOAD_DIRECTORY):
+        os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
     loaded_pdfs = [os.path.join(UPLOAD_DIRECTORY, fname) for fname in os.listdir(UPLOAD_DIRECTORY)]
     load_dotenv()
