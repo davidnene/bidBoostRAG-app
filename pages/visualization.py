@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
 import pandas as pd
-from tkinter import filedialog
 from preprocess_text import preprocess_text
 from collections import Counter
 from wordcloud import WordCloud
