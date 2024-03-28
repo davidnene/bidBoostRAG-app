@@ -11,9 +11,9 @@ from get_vector_store import get_vector_store
 import umap.umap_ as umap
 import ast
 
-tpd_df = pd.read_csv('data/viz.csv')
-pdf_info_data = pd.read_csv('data/pdf_info_data.csv')
-response_data = pd.read_csv('data/response_data.csv')
+tpd_df = pd.read_csv('viz.csv')
+pdf_info_data = pd.read_csv('pdf_info_data.csv')
+response_data = pd.read_csv('response_data.csv')
 response_data['embedding'] = response_data['embedding'].apply(ast.literal_eval)
 response_data['pdf_name'] = response_data['source'].str.extract(r'/([^/]+)\.pdf$')
 # response_data = st.session_state.embeddings_meta_df
