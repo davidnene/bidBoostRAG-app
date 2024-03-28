@@ -12,10 +12,10 @@ stop_words = set(stopwords.words('english'))
 # Define a function to preprocess text and remove stopwords
 @st.cache_data
 def preprocess_text(text):
-    # nltk.download('punkt')
+    nltk.download('punkt')
 
-    # # Download NLTK stopwords
-    # nltk.download('stopwords')
+    # Download NLTK stopwords
+    nltk.download('stopwords')
     
     # Remove leading and trailing whitespace from each line
     text = '\n'.join(line.strip() for line in text.split('\n'))
