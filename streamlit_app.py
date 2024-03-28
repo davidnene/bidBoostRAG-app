@@ -47,6 +47,8 @@ def main():
     if not os.path.exists(UPLOAD_DIRECTORY):
         os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
     
+    if not os.path.exists(DATA_UPLOAD_DIRECTORY):
+        os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
     loaded_pdfs = [os.path.join(UPLOAD_DIRECTORY, fname) for fname in os.listdir(UPLOAD_DIRECTORY)]
     load_dotenv()
@@ -101,9 +103,6 @@ def main():
                 #generate token data
                 pdf_data = pdf_token_pages(loaded_pdfs)
                 pdf_df = pd.DataFrame(pdf_data)
-                if not os.path.exists(DATA_UPLOAD_DIRECTORY):
-                    os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
-                
                 pdf_df.to_csv(f'{DATA_UPLOAD_DIRECTORY}/viz.csv', index=False)
 
                 #save pdfs data
@@ -160,7 +159,7 @@ def main():
             )
             
             # Save dataframe to CSV
-            st.session_state.embeddings_meta_df.to_csv('data/response_data.csv')
+            st.session_state.embeddings_meta_df.to_csv(f'{DATA_UPLOAD_DIRECTORY}/response_data.csv')
      
     if st.session_state.conversation == True:
         st.session_state.embeddings_meta_df = pd.DataFrame(
