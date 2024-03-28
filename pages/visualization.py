@@ -70,34 +70,67 @@ def visualize_token_pdfs_dist():
     plt.tight_layout()
     st.pyplot(plt)
 
-# Generate a word cloud for each sourc
-def word_cloud_generator():
-    # Create subplots for each document
-    fig, axes = plt.subplots(nrows=len(pdf_info_data['Source'].unique()), ncols=2, figsize=(15, 5*len(pdf_info_data['Source'].unique())))
+#word cloud generator all
+def word_cloud_generatior_all():
+    # Generate the word cloud
+    wordcloud = WordCloud(width=800, height=600, background_color='white').generate(all_text)
+    # Display the word cloud
+    plt.figure(figsize=(10, 8))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.title('Word Cloud of Preprocessed Text')
+    plt.axis('off')
+    st.pyplot(plt)
 
-    # Iterate over each unique source
-    for i, source in enumerate(pdf_info_data['Source'].unique()):
-        source_df = pdf_info_data[pdf_info_data['Source'] == source]
+# Frequency Count for all Text
+def frequency_count():
+    # Generate word frequency counts for all combined texts
+    vectorizer = CountVectorizer()
+    X = vectorizer.fit_transform([all_text])
+    word_freq = dict(zip(vectorizer.get_feature_names_out(), np.asarray(X.sum(axis=0)).ravel()))
 
-        # Generate WordCloud
-        wordcloud = WordCloud(width=400, height=300, background_color='white').generate(' '.join(source_df['Preprocessed_text']))
-        axes[i, 0].imshow(wordcloud, interpolation='bilinear')
-        axes[i, 0].set_title(f'Word Cloud for {source}')
-        axes[i, 0].axis('off')
+    # Get the top 20 words
+    sorted_word_freq = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)[:20]
 
-        # Plot bar chart for top words
-        vectorizer = CountVectorizer()
-        X = vectorizer.fit_transform(source_df['Preprocessed_text'])
-        word_freq = dict(zip(vectorizer.get_feature_names_out(), np.asarray(X.sum(axis=0)).ravel()))
-        sorted_word_freq = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)[:20]
-        sns.barplot(x=[w[1] for w in sorted_word_freq], y=[w[0] for w in sorted_word_freq], ax=axes[i, 1])
-        axes[i, 1].set_title(f'Top 20 Words for {source}')
-        axes[i, 1].set_xlabel('Frequency')
-        axes[i, 1].set_ylabel('Word')
-        axes[i, 1].tick_params(axis='y', labelrotation=45)
-
+    # Plot bar chart for top words
+    plt.figure(figsize=(8, 6))
+    sns.barplot(x=[w[1] for w in sorted_word_freq], y=[w[0] for w in sorted_word_freq])
+    plt.title('Top 20 Words for All Sources')
+    plt.xlabel('Frequency')
+    plt.ylabel('Word')
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     plt.tight_layout()
     st.pyplot(plt)
+
+
+
+# Generate a word cloud for each sourc
+# def word_cloud_generator():
+#     # Create subplots for each document
+#     fig, axes = plt.subplots(nrows=len(pdf_info_data['Source'].unique()), ncols=2, figsize=(15, 5*len(pdf_info_data['Source'].unique())))
+
+#     # Iterate over each unique source
+#     for i, source in enumerate(pdf_info_data['Source'].unique()):
+#         source_df = pdf_info_data[pdf_info_data['Source'] == source]
+
+#         # Generate WordCloud
+#         wordcloud = WordCloud(width=400, height=300, background_color='white').generate(' '.join(source_df['Preprocessed_text']))
+#         axes[i, 0].imshow(wordcloud, interpolation='bilinear')
+#         axes[i, 0].set_title(f'Word Cloud for {source}')
+#         axes[i, 0].axis('off')
+
+#         # Plot bar chart for top words
+#         vectorizer = CountVectorizer()
+#         X = vectorizer.fit_transform(source_df['Preprocessed_text'])
+#         word_freq = dict(zip(vectorizer.get_feature_names_out(), np.asarray(X.sum(axis=0)).ravel()))
+#         sorted_word_freq = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)[:20]
+#         sns.barplot(x=[w[1] for w in sorted_word_freq], y=[w[0] for w in sorted_word_freq], ax=axes[i, 1])
+#         axes[i, 1].set_title(f'Top 20 Words for {source}')
+#         axes[i, 1].set_xlabel('Frequency')
+#         axes[i, 1].set_ylabel('Word')
+#         axes[i, 1].tick_params(axis='y', labelrotation=45)
+
+#     plt.tight_layout()
+#     st.pyplot(plt)
    
 def umap_viz():
     # UMAP for dimensionality reduction
@@ -124,8 +157,14 @@ def umap_viz():
     plt.tick_params(axis='both', which='major', labelsize=12)
     st.pyplot(plt)
 
-st.header("Text word Cloud Per PDF")
-word_cloud_generator()
+# st.header("Text word Cloud Per PDF")
+# word_cloud_generator()
+
+st.header("Text word Cloud for all PDFs")
+word_cloud_generatior_all()
+
+st.header("Frequency Count for All Text")
+frequency_count()
 
 st.header("Token Distribution per Document")
 visualize_token_pdfs_dist()
