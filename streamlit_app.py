@@ -35,22 +35,16 @@ def handle_history():
 
 def handle_clear_chat():
     st.session_state.response = None
-    st.session_state.chat_history = None
+    del st.session_state.chat_history
     
 
 
 
 def main():
     UPLOAD_DIRECTORY = 'docs/proposals/'
-    DATA_UPLOAD_DIRECTORY = 'data/'
-    
-    os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
     if not os.path.exists(UPLOAD_DIRECTORY):
-        os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
-    
-    if not os.path.exists(DATA_UPLOAD_DIRECTORY):
-        os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
+        os.makedirs(UPLOAD_DIRECTORY)
 
     loaded_pdfs = [os.path.join(UPLOAD_DIRECTORY, fname) for fname in os.listdir(UPLOAD_DIRECTORY)]
     load_dotenv()
@@ -72,15 +66,14 @@ def main():
     user_question = st.text_input("What would you like to retrieve?")
     if st.button('Clear chat'):
         handle_clear_chat()
-        user_question = ''
 
     if user_question:
         try:
             handle_user_question(user_question)
         except:
             st.warning("Please upload and process proposals", icon='⚠️')
-    elif user_question == '' :
-        handle_history()
+    # else:
+    #     handle_history()
 
     with st.sidebar:
         st.subheader("Proposals")
@@ -105,7 +98,7 @@ def main():
                 #generate token data
                 pdf_data = pdf_token_pages(loaded_pdfs)
                 pdf_df = pd.DataFrame(pdf_data)
-                pdf_df.to_csv('viz.csv', index=False)
+                pdf_df.to_csv('data/viz.csv', index=False)
 
                 #save pdfs data
                 df_info_data = pd.DataFrame({
@@ -114,7 +107,7 @@ def main():
                     'Page Content': page_contents
                 })
 
-                df_info_data.to_csv('pdf_info_data.csv', index=False)
+                df_info_data.to_csv('data/pdf_info_data.csv', index=False)
 
                 # get the text chunks
                 token_chunks = get_text_chunks(raw_docs)
@@ -147,53 +140,37 @@ def main():
     # Function to embed query and compute distances
    
     def embed_and_compute_distances(user_question, embeddings_meta_df):
-        if user_question and st.session_state.conversation:
-            # Embed user question
-            embedding = OpenAIEmbeddings()
-            question_embedding = embedding.embed_query(user_question)
-            
-            # Compute distances
-            st.session_state.embeddings_meta_df["dist"] = st.session_state.embeddings_meta_df.apply(
-                lambda row: np.linalg.norm(
-                    np.array(row["embedding"]) - question_embedding
-                ),
-                axis=1,
-            )
-            
-            # Save dataframe to CSV
-            st.session_state.embeddings_meta_df.to_csv('response_data.csv')
-     
-    if st.session_state.conversation == True:
-        st.session_state.embeddings_meta_df = pd.DataFrame(
-                            {
-                                "id": st.session_state.response["ids"],
-                                "source": ["none" if metadata is None else metadata["source"] for metadata in st.session_state.response["metadatas"]]
-    ,
-                                "document": st.session_state.response["documents"],
-                                "embedding": st.session_state.response["embeddings"],
-                            }
-                        )
-        # st.write('response',st.session_state.embeddings_meta_df)
-        embed_and_compute_distances(user_question, st.session_state.embeddings_meta_df)
-            
-    else:
-        time.sleep(5)
-    # while True:
-    #     if st.session_state.conversation == True:
-    #         st.session_state.embeddings_meta_df = pd.DataFrame(
-    #                             {
-    #                                 "id": st.session_state.response["ids"],
-    #                                 "source": ["none" if metadata is None else metadata["source"] for metadata in st.session_state.response["metadatas"]]
-    #     ,
-    #                                 "document": st.session_state.response["documents"],
-    #                                 "embedding": st.session_state.response["embeddings"],
-    #                             }
-    #                         )
-    #         # st.write('response',st.session_state.embeddings_meta_df)
-    #         embed_and_compute_distances(user_question, st.session_state.embeddings_meta_df)
-    #         break
-    #     else:
-    #         time.sleep(5)
+        # Embed user question
+        embedding = OpenAIEmbeddings()
+        question_embedding = embedding.embed_query(user_question)
+        
+        # Compute distances
+        st.session_state.embeddings_meta_df["dist"] = st.session_state.embeddings_meta_df.apply(
+            lambda row: np.linalg.norm(
+                np.array(row["embedding"]) - question_embedding
+            ),
+            axis=1,
+        )
+        
+        # Save dataframe to CSV
+        st.session_state.embeddings_meta_df.to_csv('data/response_data.csv')
+    
+    while True:
+        if st.session_state.conversation:
+            st.session_state.embeddings_meta_df = pd.DataFrame(
+                                {
+                                    "id": st.session_state.response["ids"],
+                                    "source": ["none" if metadata is None else metadata["source"] for metadata in st.session_state.response["metadatas"]]
+        ,
+                                    "document": st.session_state.response["documents"],
+                                    "embedding": st.session_state.response["embeddings"],
+                                }
+                            )
+            st.write('response',st.session_state.embeddings_meta_df)
+            embed_and_compute_distances(user_question, st.session_state.embeddings_meta_df)
+            break
+        else:
+            time.sleep(5)
 
         # if user_question and st.session_state.embeddings_meta_df.sample()[0] != None:
         #     embed_and_compute_distances(user_question, st.session_state.embeddings_meta_df)
