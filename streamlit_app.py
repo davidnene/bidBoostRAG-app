@@ -35,7 +35,7 @@ def handle_history():
 
 def handle_clear_chat():
     st.session_state.response = None
-    del st.session_state.chat_history
+    st.session_state.chat_history = None
     
 
 
@@ -66,14 +66,15 @@ def main():
     user_question = st.text_input("What would you like to retrieve?")
     if st.button('Clear chat'):
         handle_clear_chat()
+        user_question = ''
 
     if user_question:
         try:
             handle_user_question(user_question)
         except:
             st.warning("Please upload and process proposals", icon='⚠️')
-    # else:
-    #     handle_history()
+    elif user_question == '' :
+        handle_history()
 
     with st.sidebar:
         st.subheader("Proposals")
@@ -123,7 +124,7 @@ def main():
                 
                 if st.session_state.conversation:
                     st.session_state.response = vector_store.get(include=["metadatas", "documents", "embeddings"])
-                    st.write('response',st.session_state.response)
+                    # st.write('response',st.session_state.response)
                     st.session_state.embeddings_meta_df = pd.DataFrame(
                         {
                             "id": st.session_state.response["ids"],
@@ -166,7 +167,7 @@ def main():
                                     "embedding": st.session_state.response["embeddings"],
                                 }
                             )
-            st.write('response',st.session_state.embeddings_meta_df)
+            # st.write('response',st.session_state.embeddings_meta_df)
             embed_and_compute_distances(user_question, st.session_state.embeddings_meta_df)
             break
         else:
