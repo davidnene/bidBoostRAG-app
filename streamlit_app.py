@@ -156,22 +156,38 @@ def main():
             
             # Save dataframe to CSV
             st.session_state.embeddings_meta_df.to_csv('data/response_data.csv')
-    while True:
-        if st.session_state.conversation == True:
-            st.session_state.embeddings_meta_df = pd.DataFrame(
-                                {
-                                    "id": st.session_state.response["ids"],
-                                    "source": ["none" if metadata is None else metadata["source"] for metadata in st.session_state.response["metadatas"]]
-        ,
-                                    "document": st.session_state.response["documents"],
-                                    "embedding": st.session_state.response["embeddings"],
-                                }
-                            )
-            # st.write('response',st.session_state.embeddings_meta_df)
-            embed_and_compute_distances(user_question, st.session_state.embeddings_meta_df)
-            break
-        else:
-            time.sleep(5)
+     
+    if st.session_state.conversation == True:
+        st.session_state.embeddings_meta_df = pd.DataFrame(
+                            {
+                                "id": st.session_state.response["ids"],
+                                "source": ["none" if metadata is None else metadata["source"] for metadata in st.session_state.response["metadatas"]]
+    ,
+                                "document": st.session_state.response["documents"],
+                                "embedding": st.session_state.response["embeddings"],
+                            }
+                        )
+        # st.write('response',st.session_state.embeddings_meta_df)
+        embed_and_compute_distances(user_question, st.session_state.embeddings_meta_df)
+            
+    else:
+        time.sleep(5)
+    # while True:
+    #     if st.session_state.conversation == True:
+    #         st.session_state.embeddings_meta_df = pd.DataFrame(
+    #                             {
+    #                                 "id": st.session_state.response["ids"],
+    #                                 "source": ["none" if metadata is None else metadata["source"] for metadata in st.session_state.response["metadatas"]]
+    #     ,
+    #                                 "document": st.session_state.response["documents"],
+    #                                 "embedding": st.session_state.response["embeddings"],
+    #                             }
+    #                         )
+    #         # st.write('response',st.session_state.embeddings_meta_df)
+    #         embed_and_compute_distances(user_question, st.session_state.embeddings_meta_df)
+    #         break
+    #     else:
+    #         time.sleep(5)
 
         # if user_question and st.session_state.embeddings_meta_df.sample()[0] != None:
         #     embed_and_compute_distances(user_question, st.session_state.embeddings_meta_df)
