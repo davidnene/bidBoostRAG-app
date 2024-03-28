@@ -103,7 +103,7 @@ def main():
                 #generate token data
                 pdf_data = pdf_token_pages(loaded_pdfs)
                 pdf_df = pd.DataFrame(pdf_data)
-                pdf_df.to_csv('data/viz.csv', index=False)
+                pdf_df.to_csv(f'{DATA_UPLOAD_DIRECTORY}/viz.csv', index=False)
 
                 #save pdfs data
                 df_info_data = pd.DataFrame({
@@ -112,7 +112,7 @@ def main():
                     'Page Content': page_contents
                 })
 
-                df_info_data.to_csv('data/pdf_info_data.csv', index=False)
+                df_info_data.to_csv(f'{DATA_UPLOAD_DIRECTORY}/pdf_info_data.csv', index=False)
 
                 # get the text chunks
                 token_chunks = get_text_chunks(raw_docs)
