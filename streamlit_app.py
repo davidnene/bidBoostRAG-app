@@ -83,15 +83,15 @@ def main():
 
     with st.sidebar:
         st.subheader("Proposals")
-        if st.checkbox("Manage Collections"):
-            st.header("Manage Proposal Documents")
-            collections = ["Collection 1", "Collection 2"]  # Define your collections
-            for collection in collections:
-                with st.expander(f"Manage {collection}"):
-                    create_folder_button = st.button(f"Create {collection} Folder", key=f"create_{collection}")
-                    if create_folder_button:
-                        create_folder(collection)
-                    upload_files(collection)
+        # if st.checkbox("Manage Collections"):
+        #     st.header("Manage Proposal Documents")
+        #     collections = ["Collection 1", "Collection 2"]  # Define your collections
+        #     for collection in collections:
+        #         with st.expander(f"Manage {collection}"):
+        #             create_folder_button = st.button(f"Create {collection} Folder", key=f"create_{collection}")
+        #             if create_folder_button:
+        #                 create_folder(collection)
+        #             upload_files(collection)
 
         pdf_docs = st.file_uploader("Upload Proposals Here and Click Process", accept_multiple_files=True)
         if st.button("process"):
