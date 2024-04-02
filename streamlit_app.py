@@ -35,7 +35,9 @@ def handle_history():
 
 def handle_clear_chat():
     st.session_state.response = None
-    del st.session_state.chat_history
+    st.session_state.chat_history = None
+    st.session_state.conversation.memory.clear()
+    
     
 
 
@@ -57,14 +59,18 @@ def main():
         st.session_state.chat_history = None
     if "response" not in st.session_state:
         st.session_state.response = None
-    if "embeddings_meta_df":
+    if "embeddings_meta_df" not in st.session_state:
         st.session_state.embeddings_meta_df = None
+    
+    if "res" not in st.session_state:
+        st.session_state.res = None
 
     st.header("BidBoost RAG 👽")
     st.subheader("Proposals Information Retriever")
 
     user_question = st.text_input("What would you like to retrieve?")
     if st.button('Clear chat'):
+        user_question = ''
         handle_clear_chat()
 
     if user_question:
@@ -72,8 +78,8 @@ def main():
             handle_user_question(user_question)
         except:
             st.warning("Please upload and process proposals", icon='⚠️')
-    # else:
-    #     handle_history()
+    elif user_question == '':
+        handle_history()
 
     with st.sidebar:
         st.subheader("Proposals")
@@ -122,15 +128,15 @@ def main():
                 # Retrieve embeddings from the vector store
                 
                 if st.session_state.conversation:
-                    st.session_state.response = vector_store.get(include=["metadatas", "documents", "embeddings"])
+                    st.session_state.res = vector_store.get(include=["metadatas", "documents", "embeddings"])
                     # st.write('response',st.session_state.response)
                     st.session_state.embeddings_meta_df = pd.DataFrame(
                         {
-                            "id": st.session_state.response["ids"],
-                            "source": ["none" if metadata is None else metadata["source"] for metadata in st.session_state.response["metadatas"]]
+                            "id": st.session_state.res["ids"],
+                            "source": ["none" if metadata is None else metadata["source"] for metadata in st.session_state.res["metadatas"]]
 ,
-                            "document": st.session_state.response["documents"],
-                            "embedding": st.session_state.response["embeddings"],
+                            "document": st.session_state.res["documents"],
+                            "embedding": st.session_state.res["embeddings"],
                         }
                     )
                     # st.write('response',st.session_state.embeddings_meta_df)
@@ -153,17 +159,17 @@ def main():
         )
         
         # Save dataframe to CSV
-        st.session_state.embeddings_meta_df.to_csv('data/response_data.csv')
+        st.session_state.embeddings_meta_df.to_csv('data/response_data.csv', index=False)
     
     while True:
         if st.session_state.conversation:
             st.session_state.embeddings_meta_df = pd.DataFrame(
                                 {
-                                    "id": st.session_state.response["ids"],
-                                    "source": ["none" if metadata is None else metadata["source"] for metadata in st.session_state.response["metadatas"]]
+                                    "id": st.session_state.res["ids"],
+                                    "source": ["none" if metadata is None else metadata["source"] for metadata in st.session_state.res["metadatas"]]
         ,
-                                    "document": st.session_state.response["documents"],
-                                    "embedding": st.session_state.response["embeddings"],
+                                    "document": st.session_state.res["documents"],
+                                    "embedding": st.session_state.res["embeddings"],
                                 }
                             )
             st.write('response',st.session_state.embeddings_meta_df)
