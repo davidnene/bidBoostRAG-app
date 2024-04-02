@@ -18,6 +18,7 @@ response_data['embedding'] = response_data['embedding'].apply(ast.literal_eval)
 response_data['pdf_name'] = response_data['source'].str.extract(r'/([^/]+)\.pdf$')
 # response_data = st.session_state.embeddings_meta_df
 
+
 sns.set_style("darkgrid")
 
 pdf_info_data['Preprocessed_text'] = pdf_info_data['Page Content'].apply(preprocess_text)
@@ -43,12 +44,6 @@ def remove_common_words(text):
 common_words = [word for word, freq in word_freq.items() if freq > threshold_freq]
 pdf_info_data['Preprocessed_text'] = pdf_info_data['Preprocessed_text'].apply(remove_common_words)
 
-
-st.header("PDFs Info Data")
-if st.checkbox("View PDFs Data Info"):
-   st.dataframe(tpd_df)
-if st.checkbox("View PDFs Preprocessed Data"):
-   st.dataframe(pdf_info_data)
 
 def visualize_token_pdfs_dist():
     sns.set_style("darkgrid")
