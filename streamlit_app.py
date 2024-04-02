@@ -172,7 +172,7 @@ def main():
                                     "embedding": st.session_state.res["embeddings"],
                                 }
                             )
-            st.write('response',st.session_state.embeddings_meta_df)
+            # st.write('response',st.session_state.embeddings_meta_df)
             embed_and_compute_distances(user_question, st.session_state.embeddings_meta_df)
             break
         else:
