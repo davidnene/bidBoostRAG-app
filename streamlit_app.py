@@ -65,8 +65,9 @@ def main():
     if "res" not in st.session_state:
         st.session_state.res = None
 
-    st.header("BidBoost RAG 👽")
-    st.subheader("Proposals Information Retriever")
+    st.image('bidboostlogo.png', width=300)
+    st.header("BidBoostAI RAG Model")
+    st.subheader("Corpus Information Retriever")
 
     user_question = st.text_input("What would you like to retrieve?")
     if st.button('Clear chat'):
