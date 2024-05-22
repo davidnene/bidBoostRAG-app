@@ -102,6 +102,7 @@ def main():
                 sources, raw_docs, page_contents = get_pdf_text(loaded_pdfs)
                 
                 #generate token data
+                print("Tokenizing viz data")
                 pdf_data = pdf_token_pages(loaded_pdfs)
                 pdf_df = pd.DataFrame(pdf_data)
                 pdf_df.to_csv('data/viz.csv', index=False)
@@ -116,6 +117,7 @@ def main():
                 df_info_data.to_csv('data/pdf_info_data.csv', index=False)
 
                 # get the text chunks
+                print("Tokenizing bot data")
                 token_chunks = get_text_chunks(raw_docs)
     
                 # create vectore store
