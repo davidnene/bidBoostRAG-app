@@ -10,6 +10,7 @@ def get_conversation_chain(vector_store):
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm = llm,
         retriever=vector_store.as_retriever(),
-        memory=memory
+        memory=memory,
+        chain_type='stuff'
     )
     return conversation_chain
